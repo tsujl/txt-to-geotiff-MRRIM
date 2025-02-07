@@ -88,18 +88,15 @@ def main():
     file1 = select_file("Select a Band1(_1r.txt) file")
     file2 = select_file("Select a Band2 and band3(_2g.txt) file")
 
+    print({file1})
+
     if not file1 or not file2:
         print("Error: File selection was cancelled.")
         return
     
-    output_tif = save_file("Save as .tif")
-
-    if not output_tif:
-        print("Error: Enter output file name")
-        return
     
     input_files = [file1, file2]
-    make_vrt(input_files)
+    output_vrt = make_vrt(input_files)
    
 #%%
 if __name__ == "__main__":
