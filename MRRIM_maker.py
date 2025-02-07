@@ -41,13 +41,25 @@ def load_dem_data(file_path):
     return dataset.GetRasterBand(1).ReadAsArray()
 
 #%%
-#scaling 1-255
-def scale_band(band_data):
-    """バンドデータを1と255の範囲にスケーリング"""
-    min_val, max_val = np.min(band_data), np.max(band_data)
-    scaled_data = 1 + ((band_data - min_val) * (255 - 1)) / (max_val - min_val)
-    return scaled_data
+def make_vrt(input_files):
+    vrt_options = gdal.BuildVRTOptions(
+        resolution="average",
+        separate="True",
+        resampleAlg="nearest",
+        overwrite=True
+    )
+    
+    output_vrt = os.path.join(file_path, "output.vrt")
 
+    #make VRT
+    vrt_dataset = gdal.BuildVRT(output_vrt, input_files, vrt_options=vrt_options)
+
+    if vrt_dataset:
+        vrt_dataset = None
+        return output_vrt
+    else:
+        return None
+    
 #%%
 #create geoTIFF
 def create_geotiff(output_tif, band1_data, band2_data, band3_data):
@@ -86,17 +98,9 @@ def main():
         print("Error: Enter output file name")
         return
     
-    band1_data = load_dem_data(file1)
-    band2_data = load_dem_data(file2)
-    band3_data = load_dem_data(file2) #same as band2
-
-    create_geotiff(output_tif, band1_data, band2_data, band3_data)
-    
-    if os.path.exists(output_tif):
-        print(f"GeoTIFF '{output_tif}' が作成されました。")
-    else:
-        print("Error: GeoTIFF ファイルの作成に失敗しました。")
-        
+    input_files = [file1, file2]
+    make_vrt(input_files)
+   
 #%%
 if __name__ == "__main__":
     main()
