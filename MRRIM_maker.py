@@ -34,7 +34,7 @@ def save_file(title="Save GeoTIFF"):
 
 #load
 def load_dem_data(file_path):
-    dataset = gdal.Open(file_path, gdal.GA_ReadOnly)
+    dataset = gdal.Open(file_path, gdal.GA_Update)
     if dataset is None:
         print(f"Error: Could not open {file_path}")
         return None
