@@ -81,6 +81,9 @@ def vrt_to_geotiff(vrt_path, output_tif, ref_txt):
     band1 = dataset.GetRasterBand(1).ReadAsArray()
     band2 = dataset.GetRasterBand(2).ReadAsArray()
 
+    band1[band1 == -9999] = 0
+    band2[band2 == -9999] = 0
+
     # スケーリング処理（1-255範囲に調整）
     def scale_band(band):
         return ((band - band.min()) / (band.max() - band.min()) * 254 + 1).astype('uint8')
@@ -91,6 +94,10 @@ def vrt_to_geotiff(vrt_path, output_tif, ref_txt):
     out_dataset.GetRasterBand(1).WriteArray(band1_scaled)
     out_dataset.GetRasterBand(2).WriteArray(band2_scaled)
     out_dataset.GetRasterBand(3).WriteArray(band2_scaled)
+
+    out_dataset.GetRasterBand(1).SetNoDataValue(0)
+    out_dataset.GetRasterBand(2).SetNoDataValue(0)
+    out_dataset.GetRasterBand(3).SetNoDataValue(0)
 
     srs = osr.SpatialReference()
     srs.ImportFromEPSG(6675)
