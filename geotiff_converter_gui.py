@@ -100,7 +100,7 @@ def vrt_to_geotiff(vrt_path, output_tif, ref_txt):
     out_dataset.GetRasterBand(3).SetNoDataValue(0)
 
     srs = osr.SpatialReference()
-    srs.ImportFromEPSG(6675)
+    srs.ImportFromEPSG(epsg_code)
     out_dataset.SetProjection(srs.ExportToWkt())
 
     out_dataset.FlushCache()
@@ -142,6 +142,11 @@ def create_gui():
     tk.Button(frame, text="Select Band1 (_1r.txt)", command=select_file1).pack()
     tk.Button(frame, text="Select Band2 (_2g.txt)", command=select_file2).pack()
 
+    tk.Label(frame, text="Enter EPSG Code:").pack()
+    epsg_entry = tk.Entry(frame)
+    epsg_entry.insert(0, "6675")
+    epsg_entry.pack()
+
     def process():
         if not file1 or not file2:
             messagebox.showerror("Error", "Please select both input files!")
@@ -157,6 +162,12 @@ def create_gui():
 
         if not output_vrt:
             messagebox.showerror("Error", "Failed to create VRT file!")
+            return
+        
+        try:
+            epsg_code = int(epsg_entry().get())
+        except ValueError:
+            messagebox.showerror("Error!", "Invalid EPSG Code!")
             return
 
         success = vrt_to_geotiff(output_vrt, output_tif, file1)
