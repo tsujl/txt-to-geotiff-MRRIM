@@ -1,0 +1,3 @@
+([('geotiff_converter_gui',
+   '/Users/ritsukitsujimori/Programs/pyDEM/gdal_MRRIM/dist/geotiff_converter_gui',
+   'EXECUTABLE')],)
